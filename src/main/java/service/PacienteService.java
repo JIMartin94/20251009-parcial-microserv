@@ -20,4 +20,6 @@ public class PacienteService {
     public List<Paciente> buscarPacientes(){
         return pacienteiDao.buscarTodos();
     }
+    public void eliminarPaciente(Integer id) {pacienteiDao.eliminar(id);}
+    public void actualizarPaciente(Paciente paciente) {pacienteiDao.actualizar(paciente);}
 }
