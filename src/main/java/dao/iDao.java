@@ -9,4 +9,5 @@ public interface iDao<T> {
     void actualizar(T t);
     T buscarGenerico(String parametro);
     List<T> buscarTodos();
+    List<T> buscarPorString(String t);
 }

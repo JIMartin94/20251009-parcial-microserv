@@ -13,7 +13,7 @@ public class PacienteDAOH2 implements iDao<Paciente> {
     private static final String SQL_DELETE_ID = " DELETE FROM PACIENTES WHERE ID = ?";
     private static final String SQL_INSERT = "INSERT INTO PACIENTES(NOMBRE, APELLIDO, NUMEROCONTACTO, FECHAINGRESO, DOMICILIO_ID, EMAIL) VALUES(?,?,?,?,?,?);";
     private static final String SQL_UPDATE_ONE = "UPDATE PACIENTES SET NOMBRE = ?, APELLIDO = ?, NUMEROCONTACTO = ?, FECHAINGRESO = ?, DOMICILIO_ID = ?, EMAIL = ? WHERE ID = ?;";
-
+    private static final String SQL_SELECT_STRING = "SELECT * FROM PACIENTES WHERE UPPER(NOMBRE) LIKE UPPER(?) OR UPPER(APELLIDO) LIKE UPPER(?)";
 
     @Override
     public Paciente guardar(Paciente paciente) {
@@ -139,6 +139,36 @@ public class PacienteDAOH2 implements iDao<Paciente> {
         } catch (Exception e) {
             System.out.println("Error: "+ e.getMessage());
         }
+        return pacientes;
+    }
+
+    public List<Paciente> buscarPorString(String texto) {
+        Connection connection = null;
+        Paciente paciente = null;
+        Domicilio domicilio = null;
+        List<Paciente> pacientes = new ArrayList<>();
+
+        try {
+            connection = BD.getConnection();
+            Statement statement = connection.createStatement();
+            PreparedStatement ps_select_string = connection.prepareStatement(SQL_SELECT_STRING);
+            String campo = "%" + texto + "%";
+            ps_select_string.setString(1, campo);
+            ps_select_string.setString(2, campo);
+
+            ResultSet rs = ps_select_string.executeQuery();
+            DomicilioDAOH2 daoAux = new DomicilioDAOH2();
+
+            while (rs.next()) {
+                domicilio = daoAux.buscar(rs.getInt(6));
+                paciente = new Paciente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getDate(5).toLocalDate(), domicilio, rs.getString(7));
+                pacientes.add(paciente);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error buscando pacientes por texto: " + e.getMessage());
+        }
+
         return pacientes;
     }
 

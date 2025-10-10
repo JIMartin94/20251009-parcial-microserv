@@ -2,6 +2,7 @@ package service;
 
 import dao.iDao;
 import model.Odontologo;
+import model.Paciente;
 
 
 import java.util.List;
@@ -28,5 +29,6 @@ public class OdontologoService {
     public void actualizarOdontologo(Odontologo odontologo) {
         odontologoiDao.actualizar(odontologo);
     }
+    public List<Odontologo> buscarOdontologoPorString(String texto) { return odontologoiDao.buscarPorString(texto);}
 
 }

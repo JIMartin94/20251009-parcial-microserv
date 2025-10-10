@@ -2,6 +2,8 @@ package dao;
 
 import model.Domicilio;
 import model.Odontologo;
+import model.Odontologo;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,7 @@ public class OdontologoDAOH2 implements iDao<Odontologo> {
     private static final String SQL_DELETE_ID = " DELETE FROM ODONTOLOGOS WHERE ID = ?";
     private static final String SQL_INSERT = "INSERT INTO ODONTOLOGOS(NOMBRE, APELLIDO, MATRICULA) VALUES(?,?,?);";
     private static final String SQL_UPDATE_ONE = "UPDATE ODONTOLOGOS SET NOMBRE = ?, APELLIDO = ?, MATRICULA = ? WHERE ID = ?;";
-
+    private static final String SQL_SELECT_STRING = "SELECT * FROM ODONTOLOGOS WHERE UPPER(NOMBRE) LIKE UPPER(?) OR UPPER(APELLIDO) LIKE UPPER(?)";
 
     @Override
     public Odontologo guardar(Odontologo odontologo) {
@@ -50,7 +52,6 @@ public class OdontologoDAOH2 implements iDao<Odontologo> {
             ps_select_one.setInt(1, id);
             //ResultSet mundo bdd a java
             ResultSet rs = ps_select_one.executeQuery();
-            DomicilioDAOH2 daoAux = new DomicilioDAOH2();
             while (rs.next()) {
                 odontologo = new Odontologo(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
             }
@@ -120,7 +121,6 @@ public class OdontologoDAOH2 implements iDao<Odontologo> {
             Statement statement = connection.createStatement();
             PreparedStatement ps_select_all = connection.prepareStatement(SQL_SELECT_ALL);
             ResultSet rs = ps_select_all.executeQuery();
-            DomicilioDAOH2 daoAux = new DomicilioDAOH2();
             while (rs.next()) {
                 odontologo = new Odontologo(rs.getInt(1), rs.getString(2), rs.getString(3),  rs.getString(4));
                 odontologos.add(odontologo);
@@ -128,6 +128,35 @@ public class OdontologoDAOH2 implements iDao<Odontologo> {
         } catch (Exception e) {
             System.out.println("Error: "+ e.getMessage());
         }
+        return odontologos;
+    }
+
+    @Override
+    public List<Odontologo> buscarPorString(String texto) {
+        Connection connection = null;
+        Odontologo odontologo = null;
+        List<Odontologo> odontologos = new ArrayList<>();
+
+        try {
+            connection = BD.getConnection();
+            Statement statement = connection.createStatement();
+            PreparedStatement ps_select_string = connection.prepareStatement(SQL_SELECT_STRING);
+            String campo = "%" + texto + "%";
+            ps_select_string.setString(1, campo);
+            ps_select_string.setString(2, campo);
+
+            ResultSet rs = ps_select_string.executeQuery();
+            DomicilioDAOH2 daoAux = new DomicilioDAOH2();
+
+            while (rs.next()) {
+                odontologo = new Odontologo(rs.getInt(1), rs.getString(2), rs.getString(3),  rs.getString(4));
+                odontologos.add(odontologo);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error buscando odontologo por texto: " + e.getMessage());
+        }
+
         return odontologos;
     }
 

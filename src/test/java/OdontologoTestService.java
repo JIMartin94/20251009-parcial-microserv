@@ -2,7 +2,9 @@ import dao.BD;
 import dao.OdontologoDAOH2;
 import model.Domicilio;
 import model.Odontologo;
+import model.Paciente;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.OdontologoService;
 
@@ -12,19 +14,17 @@ import java.util.List;
 public class OdontologoTestService {
 
     OdontologoService odontologoService= new OdontologoService(new OdontologoDAOH2());
-    
-    @Test
-    public void crearTablasConDatos(){
-        //DADO
+
+    @BeforeEach
+    public void crearTablas() {
+        System.out.println("Creando tablas");
         BD.crearTablas();
     }
 
 
     @Test
-    public void buscarOdontologo(){
-        //DADO
-        BD.crearTablas();
-        //CUANDO
+    public void TesBbuscarOdontologo(){
+        System.out.println("Metodo TesBbuscarOdontologo()");
         Odontologo odontologo= odontologoService.buscarOdontologoPorId(1);
         //ENTONCES
         Assertions.assertTrue(odontologo!=null);
@@ -33,9 +33,7 @@ public class OdontologoTestService {
 
     @Test
     void testBuscarOdontologos() {
-        //DADO
-        BD.crearTablas();
-        //CUANDO
+        System.out.println("Metodo testBuscarOdontologos()");
         List<Odontologo> odontologos= odontologoService.buscarOdontologos();
         //ENTONCES
         Assertions.assertEquals(1, odontologos.size());
@@ -44,8 +42,7 @@ public class OdontologoTestService {
 
     @Test
     void testEliminarOdontologo() {
-        //DADO
-        BD.crearTablas();
+        System.out.println("Metodo testEliminarOdontologo()");
         int odontologosAntes= odontologoService.buscarOdontologos().size();
         //CUANDO
         odontologoService.eliminarOdontologo(1);
@@ -56,8 +53,7 @@ public class OdontologoTestService {
 
     @Test
     void testGuardarOdontologo() {
-        //DADO
-        BD.crearTablas();
+        System.out.println("Metodo testGuardarOdontologo()");
         int odontologosAntes= odontologoService.buscarOdontologos().size();
         Odontologo bart = new Odontologo("Bart","Simpson","1651651");
         //CUANDO
@@ -69,8 +65,7 @@ public class OdontologoTestService {
 
     @Test
     void testActualizarOdontologo() {
-        //DADO
-        BD.crearTablas();
+        System.out.println("Metodo testActualizarOdontologo()");
         Odontologo odontologo= odontologoService.buscarOdontologoPorId(1);
         String apellidoAnterior = odontologo.getApellido();
         odontologo.setApellido("Wolfe");
@@ -81,4 +76,13 @@ public class OdontologoTestService {
         Assertions.assertNotEquals(apellidoAnterior, odontologoActualizado.getApellido());
         System.out.println(apellidoAnterior +" - "+ odontologoActualizado.getApellido());
     }
+
+    @Test
+    void testBuscarOdontologosPorString() {
+        System.out.println("Metodo testBuscarOdontologosPorString()");
+        List<Odontologo> odontologos= odontologoService.buscarOdontologoPorString("nicK");
+        Assertions.assertEquals("Nick", odontologos.get(0).getNombre());
+        Assertions.assertTrue(odontologos!=null);
+    }
+
 }
