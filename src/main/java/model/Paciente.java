@@ -1,17 +1,45 @@
-package model;
+package com.clinicaODontologica.UP.entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
+@Setter
+@Getter
+@Entity
+@Table(name = "pacientes")
 public class Paciente {
-    private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column
     private String  nombre;
+    @Column
     private String apellido;
+    @Column
     private Integer numeroContacto;
+    @Column
     private LocalDate fechaIngreso;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "domicilio_id",referencedColumnName = "id")
     private Domicilio domicilio;
+    @Column(unique = true)
     private String email;
+    @OneToMany(mappedBy = "paciente",fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<Turno> turnos= new HashSet<>();
 
-    public Paciente(Integer id, String nombre, String apellido, Integer numeroContacto, LocalDate fechaIngreso, Domicilio domicilio, String email) {
+
+    //OneToMany y ManyToMany son LAZY default
+    // ManyToOne y One to One son EAGER default
+    public Paciente(Long id, String nombre, String apellido, Integer numeroContacto, LocalDate fechaIngreso, Domicilio domicilio, String email) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.numeroContacto = numeroContacto;
@@ -30,68 +58,6 @@ public class Paciente {
         this.email = email;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getApellido() {
-        return apellido;
-    }
-
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
-    }
-
-    public Integer getNumeroContacto() {
-        return numeroContacto;
-    }
-
-    public void setNumeroContacto(Integer numeroContacto) {
-        this.numeroContacto = numeroContacto;
-    }
-
-    public LocalDate getFechaIngreso() {
-        return fechaIngreso;
-    }
-
-    public void setFechaIngreso(LocalDate fechaIngreso) {
-        this.fechaIngreso = fechaIngreso;
-    }
-
-    public Domicilio getDomicilio() {
-        return domicilio;
-    }
-
-    public void setDomicilio(Domicilio domicilio) {
-        this.domicilio = domicilio;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return "Paciente{" +
-                "nombre='" + nombre + '\'' +
-                ", apellido='" + apellido + '\'' +
-                ", id=" + id +
-                '}';
+    public Paciente() {
     }
 }
